@@ -27,4 +27,12 @@ app.use(
 );
 
 app.use(cookieParser());
+
+// routes register
+import userRouter from "./routes/user.routes.js";
+
+//registering rooutes
+app.use("/api/v1/user", userRouter);
+
+// ------------------------------- //
 export { app };
