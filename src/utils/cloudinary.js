@@ -13,22 +13,26 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-try {
-  const uploadOnCloudinary = async (LocalFilePath) => {
+const uploadOnCloudinary = async (LocalFilePath) => {
+  try {
     if (!LocalFilePath) return null;
 
     //if file path exist upload to cloudinary
     const response = await cloudinary.uploader.upload(LocalFilePath, {
       resource_type: "auto",
     });
-    console.log(
-      `---- your file has been uploaded to cloudinary ----`,
-      response.url,
-    );
-  };
-} catch (error) {
-  // remove locally saved temp file after the operation gets failed
-  fs.unlinkSync(LocalFilePath);
+    // console.log(
+    //   `---- your file has been uploaded to cloudinary ----`,
+    //   response.url,
+    // );
 
-  return null;
-}
+    fs.unlinkSync(LocalFilePath);
+    return response;
+  } catch (error) {
+    // remove locally saved temp file after the operation gets failed
+    fs.unlinkSync(LocalFilePath);
+    return null;
+  }
+};
+
+export { uploadOnCloudinary };

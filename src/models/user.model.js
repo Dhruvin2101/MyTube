@@ -54,7 +54,7 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); //if user modifies password then only do hashing esle its not needed for other task like changing avatar and stuff
 
   this.password = await bcrypt.hash(this.password, 10); // store hashed password in DB
-  next();
+  // next();  it was giving me some error on postman related to mongoose not being able to understand it
 });
 
 // to compare password from user(normal string) to the one in DB(hashed)
