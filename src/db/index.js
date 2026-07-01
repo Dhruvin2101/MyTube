@@ -6,16 +6,18 @@ dotenv.config({
   path: "./env",
 });
 
+// Mongodb Atlas ruuning from dhruvin.codes@gmail.com
+
 const connectDB = async () => {
   try {
     const connectionInstance = await mongoose.connect(
-      `${process.env.MONGO_URI}/${DB_NAME}`,
+      `${process.env.MONGO_URI}/${DB_NAME}`
     );
     console.log(
-      `DB connected successfully !! ${connectionInstance.connection.host}`,
+      `\n ##### DB connected successfully !! ##### ${connectionInstance.connection.host}`
     );
   } catch (error) {
-    console.log(`##### DB connection error #####`, error);
+    console.log(`\n ##### DB connection error #####`, error);
     process.exit(1);
   }
 };

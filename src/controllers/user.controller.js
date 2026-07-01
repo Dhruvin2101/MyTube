@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // .some will iterate through arr for each item and return a boolean value
   if (
     [username, email, fullName, password].some(
-      (fields) => fields?.trim() === "",
+      (fields) => fields?.trim() === ""
     )
   ) {
     throw new apiError(201, "Filling all the fields are mandatory");
@@ -65,7 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken",
+    "-password -refreshToken"
   );
 
   if (!createdUser) {

@@ -13,11 +13,11 @@ app.use(
 
 app.use(
   express.json({
-    limit: "20kb",
+    limit: "16kb",
   }),
 );
 
-app.use(express.static("publis"));
+app.use(express.static("public"));
 
 app.use(
   express.urlencoded({
