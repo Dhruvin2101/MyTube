@@ -12,7 +12,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
   //this all is happening bcz when the user hits logout he doesnt provide his username and pass so bcz of that we have to do this to find which user is trying to get logged out
   try {
     const token =
-      req.cookies?.accessToken ||     //here it is "cookies" not cookie
+      req.cookies?.accessToken || //here it is "cookies" not cookie
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {

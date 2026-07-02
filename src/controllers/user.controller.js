@@ -234,8 +234,9 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     throw new apiError(401, "Enter valid passwords");
   }
 
-  const user = User.findById(req.user?._id);
-  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+  const user = await User.findById(req.user?._id);
+  console.log(user?.password);
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
     throw new apiError(400, "Invalid Password");
@@ -250,7 +251,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = User.findById(req.user?._id);
+  const user = await User.findById(req.user?._id);
 
   if (!user) {
     throw new apiError(401, "Something went Wrong");
