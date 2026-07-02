@@ -177,49 +177,184 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-
   try {
-    const incomingRequestToken = req.cookies?.refreshToken || req.body?.refreshToken
-  
-    if(!incomingRequestToken){
-      throw new apiError(401, "Unauthorized Access")
+    const incomingRequestToken =
+      req.cookies?.refreshToken || req.body?.refreshToken;
+
+    if (!incomingRequestToken) {
+      throw new apiError(401, "Unauthorized Access");
     }
-  
-    const decodedToken = jwt.verify(incomingRequestToken,process.env.REFRESH_TOKEN_SECRET)
-  
-    const user = await User.findById(decodedToken?._id)
-  
-    if(!user){
-      throw new apiError(401,"Invalid Refresh Token")
+
+    const decodedToken = jwt.verify(
+      incomingRequestToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    const user = await User.findById(decodedToken?._id);
+
+    if (!user) {
+      throw new apiError(401, "Invalid Refresh Token");
     }
-  
-    if(incomingRequestToken !== user?.refreshToken){
-      throw new apiError(401, "This Request token is invalid or expired ")
+
+    if (incomingRequestToken !== user?.refreshToken) {
+      throw new apiError(401, "This Request token is invalid or expired ");
     }
-  
-    const {accessToken, refreshToken: newRefreshToken} = await generateaccessandrefreshtoken(user._id)
-  
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateaccessandrefreshtoken(user._id);
+
     const options = {
       httpOnly: true,
-      secure: true
-    }
-  
+      secure: true,
+    };
+
     res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new apiResponse(
+          200,
+          {
+            accessToken,
+            refreshToken: newRefreshToken,
+          },
+          ""
+        )
+      );
+  } catch (error) {
+    throw new apiError(error?.message || "Invalid Refresh Token");
+  }
+});
+
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!(oldPassword || newPassword)) {
+    throw new apiError(401, "Enter valid passwords");
+  }
+
+  const user = User.findById(req.user?._id);
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordCorrect) {
+    throw new apiError(400, "Invalid Password");
+  }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
+  res
     .status(200)
-    .cookie("accessToken",accessToken,options)
-    .cookie("refreshToken", newRefreshToken,options)
+    .json(new apiResponse(200, {}, "Password updated successfully !!"));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+  const user = User.findById(req.user?._id);
+
+  if (!user) {
+    throw new apiError(401, "Something went Wrong");
+  }
+
+  res
+    .status(200)
+    .json(
+      new apiResponse(200, { user }, "Current user fetched Successfully !!")
+    );
+});
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, email } = req.body;
+
+  if (!(fullName || email)) {
+    throw new apiError(401, "Enter valid Fullname and Email");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: { fullName, email },
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  res
+    .status(200)
     .json(
       new apiResponse(
         200,
-        {
-          accessToken,refreshToken: newRefreshToken
-        },
-        ""
+        { user },
+        "fullName and email updated succesfully !!"
       )
-    )
-  } catch (error) {
-    throw new apiError(error?.message || "Invalid Refresh Token")
-  }
-})
+    );
+});
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.files?.path;
+
+  if (!avatarLocalPath) {
+    throw new apiError(400, "Avatar file is missing");
+  }
+
+  const newAvatar = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!newAvatar.url) {
+    throw new apiError(400, "Error while uploading on Avatar");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: { avatar: newAvatar.url },
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  res
+    .status(200)
+    .json(new apiResponse(200, { user }, "Avatar updates successfully "));
+});
+
+const updateUserCoverImage = asyncHandler(async (req, res) => {
+  const coverImageLocalPath = req.files?.path;
+
+  if (!coverImageLocalPath) {
+    throw new apiError(400, "coverImage file is missing");
+  }
+
+  const newCoverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+  if (!newCoverImage.url) {
+    throw new apiError(400, "Error while uploading on Cover Image");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: { coverImage: newCoverImage.url },
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  res
+    .status(200)
+    .json(new apiResponse(200, { user }, "Cover Image updates successfully "));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+  updateUserAvatar,
+  updateUserCoverImage,
+};
