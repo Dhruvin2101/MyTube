@@ -235,10 +235,10 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(req.user?._id);
-  console.log(user?.password);
+
   const isPasswordValid = await user.isPasswordCorrect(oldPassword);
 
-  if (!isPasswordCorrect) {
+  if (!isPasswordValid) {
     throw new apiError(400, "Invalid Password");
   }
 
@@ -293,7 +293,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.files?.path;
+  const avatarLocalPath = req.files?.avatar[0]?.path;
+
+  console.log(avatarLocalPath);
 
   if (!avatarLocalPath) {
     throw new apiError(400, "Avatar file is missing");
@@ -321,7 +323,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-  const coverImageLocalPath = req.files?.path;
+  const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
   if (!coverImageLocalPath) {
     throw new apiError(400, "coverImage file is missing");
