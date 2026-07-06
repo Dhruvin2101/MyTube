@@ -350,6 +350,79 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, { user }, "Cover Image updates successfully "));
 });
 
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+
+  console.log(username);
+
+  if (!username.trim()) {
+    throw new apiError(401, "invalid username");
+  }
+
+  const channel = await User.aggregate([
+    {
+      $match: {
+        username: username?.toLowerCase(),
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id", // localField == foreignFiel (compared) so, user.id
+        foreignField: "channel", // this will get all the channels == user.id
+        as: "subsribers", // this will get us an array of all the users that have subscribed to channel==user.id
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id", //user.id
+        foreignField: "subscriber", //susubscriber == user.id
+        as: "subsribedTo", // this will give us an array of all the channels that user has subscirbed to
+      },
+    },
+    {
+      $addFields: {
+        subscribersCount: {
+          $size: "$subsribers", // return the count of the subscribers user have
+        },
+        channelsSubscribedToCount: {
+          $size: "$subsribedTo", // returns the count of channels user has subscriber to
+        },
+        isSubscribed: {
+          $cond: {
+            if: { $in: [req.user?._id, "$subsribers.subscriber"] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        fullName: 1,
+        username: 1,
+        email: 1,
+        coverImage: 1,
+        avatar: 1,
+        subscribersCount: 1,
+        channelsSubscribedToCount: 1,
+        isSubscribed: 1,
+      },
+    },
+  ]);
+  console.log(channel);
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        201,
+        { channel },
+        "Channel profile fetched successfully !"
+      )
+    );
+});
+
 export {
   registerUser,
   loginUser,
@@ -360,4 +433,5 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   updateUserCoverImage,
+  getUserChannelProfile,
 };
