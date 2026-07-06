@@ -1,0 +1,77 @@
+[33mcommit 4112990552dabb2567a0d54afa0d7fa7bada16a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Enhance user routes and controller: add watch history controller and route,
+
+[33mcommit 670565185f8d8a7184bda8ed203e4e839dce7267[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    userChannelProfile controller changes
+
+[33mcommit bffe2a105454a48490c7d14624d0ee32f118c47e[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Add UserChannelProfile route and controller
+
+[33mcommit acaa3826b863ae781db43477af4fb550d7d584d2[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Enhance user routes and controller: fix password validation, update avatar and cover image handling, and add new routes for updating avatar and cover image.
+
+[33mcommit 26a6495aaa719dd5d9107f57903b26d95050958f[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Refactor user controller and routes: fix async handling in password change and current user retrieval; add update password route.
+
+[33mcommit 0488b9511c63095ac21e50beb12166a3b33f6340[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Enhance user controller with new functionalities: implement change password, get current user, update account details, and manage user avatar/cover image uploads.
+
+[33mcommit 269fc78ade1ca38b9edf675d866636228f5f643c[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Add subscription model
+
+[33mcommit bd585fabc5db24721851f98ea0129633466b0bfd[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    Implemented Controller & route for generating new refresh token
+
+[33mcommit e9c5d3becff689fc81a0762262cc93f19227ea89[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    all register controller bugs fixed
+
+[33mcommit 187b82b3571e28415cc6484da4ae55cb4c02e37e[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    made registerUser in user model
+
+[33mcommit a4d2ab5a51cbc5df2a1a8ca13e3a4e8f7f2dbfc8[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    made controllers and routes for user
+
+[33mcommit 6e7e947fa4525d6013396f135a95fc81ff322871[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    multer middleware written
+
+[33mcommit 76ac50152b1390232c3b74fe28ef452216e994b7[m
+Author: Dhruvin2101 <dhruvinpatel746@gmail.com>
+Commit: Dhruvin2101 <dhruvinpatel746@gmail.com>
+
+    created models and some utils
