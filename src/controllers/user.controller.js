@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateaccessandrefreshtoken = async (userId) => {
   try {
@@ -54,6 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (existingUser) {
     throw new apiError(409, "user with username or email already exists");
   }
+  console.log(username, email, fullName, password);
 
   // fethcing the path from files in request`
   const avatarLocalPath = req.files?.avatar[0]?.path;
@@ -251,6 +253,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
+  console.log("helllo");
   const user = await User.findById(req.user?._id);
 
   if (!user) {
@@ -293,7 +296,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.file?.path;
 
   console.log(avatarLocalPath);
 
@@ -323,7 +326,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  const coverImageLocalPath = req.files?.path;
 
   if (!coverImageLocalPath) {
     throw new apiError(400, "coverImage file is missing");
@@ -409,14 +412,76 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(channel);
+
+  if (!channel?.length) {
+    throw new apiError(400, "channel does not exist");
+  }
+
   res
     .status(200)
     .json(
       new apiResponse(
         201,
-        { channel },
-        "Channel profile fetched successfully !"
+        channel[0],
+        "User Channel profile fetched successfully !"
+      )
+    );
+});
+
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    fullName: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
+                },
+                {
+                  $addFields: {
+                    owner: {
+                      $first: "$owner",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  if (!user) {
+    throw new apiError(400, "Error finding the user");
+  }
+
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        user[0].watchHistory,
+        "User watchHistory fetched successfully !!"
       )
     );
 });
@@ -432,4 +497,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
+  getWatchHistory,
 };
