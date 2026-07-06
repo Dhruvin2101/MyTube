@@ -48,6 +48,8 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+h --force-with-lease origin main
+
 # Optional npm cache directory
 .npm
 
