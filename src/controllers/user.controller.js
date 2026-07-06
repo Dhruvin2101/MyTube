@@ -353,8 +353,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
 
-  console.log(username);
-
   if (!username.trim()) {
     throw new apiError(401, "invalid username");
   }
