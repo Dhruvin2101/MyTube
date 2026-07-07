@@ -1,4 +1,8 @@
-import { uploadVideo, getVideo } from "../controllers/video.controller.js";
+import {
+  uploadVideo,
+  getVideo,
+  deleteVideo,
+} from "../controllers/video.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import { Router } from "express";
 import {
@@ -24,5 +28,6 @@ router.route("/upload-video").post(
   uploadVideo
 );
 router.route("/get-video").get(verifyJWT, getVideo);
+router.route("/delete/:id").delete(verifyJWT, deleteVideo);
 
 export default router;

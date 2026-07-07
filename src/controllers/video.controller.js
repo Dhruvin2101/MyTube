@@ -2,8 +2,13 @@ import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import { apiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
+import mongoose from "mongoose";
+import { getPublicID } from "../utils/getPublicId.js";
 
 const uploadVideo = asyncHandler(async (req, res) => {
   //check if user is logged in or not
@@ -67,4 +72,33 @@ const getVideo = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, video, "videos fetched successfully"));
 });
 
-export { uploadVideo, getVideo };
+const deleteVideo = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    throw new apiError(400, "video not found ");
+  }
+
+  const video = await Video.findById(id);
+
+  if (!video) {
+    throw new apiError(400, "Video does not exist");
+  }
+
+  if (!video.owner.equals(req.user._id)) {
+    throw new apiError(403, "Unauthorized");
+  }
+
+  //video deletion on cloudinary
+  const videoPublicID = getPublicID(video.videoFile);
+  const thumbnailPublicID = getPublicID(video.thumbnail);
+
+  await deleteFromCloudinary(videoPublicID, "video");
+  await deleteFromCloudinary(thumbnailPublicID, "image");
+
+  await video.deleteOne();
+
+  res.status(200).json(new apiResponse(200, {}, "Video deleted successfully"));
+});
+
+export { uploadVideo, getVideo, deleteVideo };
