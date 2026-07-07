@@ -30,13 +30,10 @@ app.use(cookieParser());
 
 // routes register
 import userRouter from "./routes/user.routes.js";
+import videoRouter from "./routes/video.routes.js";
 
 //registering rooutes
 app.use("/api/v1/user", userRouter);
-
-app.get("/hello", (req, res) => {
-  res.send("HELLO FROM MY APP");
-});
-
+app.use("/api/v1/video", videoRouter);
 // ------------------------------- //
 export { app };

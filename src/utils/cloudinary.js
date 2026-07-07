@@ -26,11 +26,12 @@ const uploadOnCloudinary = async (LocalFilePath) => {
     //   response.url,
     // );
 
-    fs.unlinkSync(LocalFilePath);
+    await fs.promises.unlink(LocalFilePath);
+
     return response;
   } catch (error) {
     // remove locally saved temp file after the operation gets failed
-    fs.unlinkSync(LocalFilePath);
+    await fs.promises.unlink(LocalFilePath);
     return null;
   }
 };
